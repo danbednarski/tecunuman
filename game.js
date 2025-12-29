@@ -276,14 +276,16 @@ function generateMap() {
     // SOUTHERN ROUTE - Lake Atitlán
     // ========================================
     
-    // Sololá - South toward Lake Atitlán
+    // Sololá - South toward Lake Atitlán (contested - Spanish advancing!)
     nodes.push(createNode({
         id: 'solola',
         x: 900, y: 1200,
         name: "Sololá",
-        description: "Gateway to Lake Atitlán. Learn about possession and ownership.",
+        description: "Gateway to Lake Atitlán. Spanish forces are advancing from the south! Learn about possession and ownership to rally the defenders.",
         lessonType: 'possession',
-        status: 'kiche',
+        status: 'contested',
+        spanishStrength: 150,
+        revealed: true, // Visible from start - shows the Spanish threat
         requires: [{nodeId: 'chichi', difficulty: 'soldier'}],
         region: 'kaqchikel',
     }));
@@ -1579,10 +1581,15 @@ function startBattleQuiz(node, type) {
     // Capture the current difficulty level for this battle
     const currentDifficulty = typeof getDifficulty === 'function' ? getDifficulty() : 'soldier';
     
+    // Question count based on difficulty: soldier=5, warrior=10, hero=15
+    const questionCounts = { soldier: 5, warrior: 10, hero: 15 };
+    const questionCount = questionCounts[currentDifficulty] || 5;
+    
     GameState.currentBattle = {
         node: node,
         type: type, // 'attack', 'defend', or 'train'
         difficulty: currentDifficulty, // Store the difficulty for this battle
+        questionCount: questionCount, // Store question count for this battle
         startingArmy: GameState.army,
         enemyStrength: node.spanishStrength || 0,
         startingEnemyStrength: node.spanishStrength || 0,
@@ -1592,7 +1599,7 @@ function startBattleQuiz(node, type) {
     const lessonId = node.lessonType || 'vocabulary';
     // Pass learned words for recall questions
     const learnedWordsList = Array.from(GameState.wordsLearned).map(w => ({ kiche: w }));
-    GameState.currentQuestions = generateLessonQuestions(lessonId, 5, learnedWordsList);
+    GameState.currentQuestions = generateLessonQuestions(lessonId, questionCount, learnedWordsList);
     GameState.currentQuestionIndex = 0;
     GameState.correctAnswers = 0;
     
@@ -1888,7 +1895,8 @@ function nextQuestion() {
 function endBattle() {
     const battle = GameState.currentBattle;
     const node = battle.node;
-    const correctRatio = GameState.correctAnswers / 5;
+    const totalQuestions = battle.questionCount || GameState.currentQuestions.length || 5;
+    const correctRatio = GameState.correctAnswers / totalQuestions;
     const difficulty = battle.difficulty || 'soldier';
     
     let result = {
@@ -1909,25 +1917,25 @@ function endBattle() {
     
     if (battle.type === 'train') {
         // Training - always beneficial, but only marks as complete at 60%+
-        result.title = 'Training Complete';
+        result.title = t('trainingComplete');
         result.icon = '📚';
-        result.message = `Your warriors have studied ${LESSONS[node.lessonType]?.englishName || 'K\'iche\''}.`;
+        result.message = `${t('studiedLesson')} ${LESSONS[node.lessonType]?.englishName || 'K\'iche\''}.`;
         if (correctRatio >= 0.6) {
             result.message += ` (${t(difficulty)} ${t('level')} ✓)`;
         }
-        result.territoryChange = 'N/A';
+        result.territoryChange = t('na');
         result.armyChange = Math.floor(correctRatio * 30);
         GameState.army += result.armyChange;
         GameState.morale = Math.min(100, GameState.morale + Math.floor(correctRatio * 5));
     } else if (correctRatio >= 0.8) {
         // Decisive victory - territory fully captured
-        result.title = 'Victory!';
+        result.title = t('victory');
         result.icon = '🏆';
         GameState.battlesWon++;
         
         node.status = 'kiche';
         node.spanishStrength = 0;
-        result.message = `Your mastery of K'iche' inspires your warriors! ${node.name} is liberated!`;
+        result.message = `${t('masteryInspires')} ${node.name} ${t('liberated')}`;
         result.territoryChange = t('captured');
         result.armyChange = 50;
         GameState.army += result.armyChange;
@@ -1935,38 +1943,39 @@ function endBattle() {
         
     } else if (correctRatio >= 0.6) {
         // Partial victory - use actual remaining enemy strength
-        result.title = 'Hard-Fought Victory';
         result.icon = '⚔️';
         GameState.battlesWon++;
         
-        // Use the actual reduced enemy strength from battle, not a percentage of starting
+        // Use the actual reduced enemy strength from battle
         const remainingEnemies = battle.enemyStrength;
         
         if (remainingEnemies <= 0 || remainingEnemies < battle.startingEnemyStrength * 0.2) {
             // Enemies nearly wiped out - territory captured
+            result.title = t('hardFoughtVictory');
             node.status = 'kiche';
             node.spanishStrength = 0;
-            result.message = `${node.name} is now under K'iche' control!`;
+            result.message = `${node.name} ${t('liberated')}`;
             result.territoryChange = t('captured');
         } else {
-            // Some enemies remain - territory captured but they may return
-            node.status = 'kiche';
-            node.spanishStrength = 0;
-            result.message = `You've taken ${node.name}! The remaining Spanish flee.`;
-            result.territoryChange = t('captured');
+            // Significant enemies remain - territory still contested, but weakened
+            result.title = t('pushedBack');
+            node.status = 'contested';
+            node.spanishStrength = remainingEnemies; // Keep actual remaining enemies
+            result.message = `${t('enemiesWeakened')} ${node.name}. ${remainingEnemies} ${t('soldiersRemain')}`;
+            result.territoryChange = t('contested');
         }
         result.armyChange = -30;
         GameState.army = Math.max(100, GameState.army + result.armyChange);
         
     } else if (correctRatio >= 0.4) {
         // Stalemate - use actual remaining enemy strength  
-        result.title = 'Stalemate';
+        result.title = t('stalemate');
         result.icon = '🛡️';
         
         // Keep actual remaining enemy strength
         node.status = 'contested';
         node.spanishStrength = Math.max(battle.enemyStrength, Math.floor(battle.startingEnemyStrength * 0.3));
-        result.message = `Neither side gains ground at ${node.name}. The struggle continues.`;
+        result.message = `${t('neitherGains')} ${node.name}. ${t('struggleContinues')}`;
         result.territoryChange = t('contested');
         result.armyChange = -60;
         GameState.army = Math.max(100, GameState.army + result.armyChange);
@@ -1974,14 +1983,14 @@ function endBattle() {
         
     } else {
         // Defeat - enemies recover somewhat
-        result.title = 'Defeat';
+        result.title = t('defeat');
         result.icon = '💀';
         GameState.battlesLost++;
         
         node.status = 'spanish';
         // Enemies recover to at least 60% of starting strength after victory
         node.spanishStrength = Math.max(battle.enemyStrength, Math.floor(battle.startingEnemyStrength * 0.6));
-        result.message = `The attack on ${node.name} fails. Your warriors must retreat.`;
+        result.message = `${t('attackFails')} ${node.name}.`;
         result.territoryChange = t('lost');
         result.armyChange = -100;
         GameState.army = Math.max(100, GameState.army + result.armyChange);
@@ -2001,7 +2010,7 @@ function endBattle() {
     
     document.getElementById('result-icon').textContent = result.icon;
     document.getElementById('result-message').textContent = result.message;
-    document.getElementById('correct-count').textContent = `${GameState.correctAnswers}/5`;
+    document.getElementById('correct-count').textContent = `${GameState.correctAnswers}/${totalQuestions}`;
     document.getElementById('territory-result').textContent = result.territoryChange;
     document.getElementById('army-change').textContent = result.armyChange >= 0 ? `+${result.armyChange}` : result.armyChange;
     document.getElementById('words-learned').textContent = GameState.wordsLearned.size;
