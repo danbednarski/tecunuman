@@ -140,20 +140,17 @@ body::after {
 
 #title-screen {
     background: 
-        /* Stepped temple silhouette */
-        linear-gradient(180deg, 
-            transparent 0%, 
-            transparent 60%,
-            rgba(61, 35, 20, 0.8) 60%,
-            var(--cacao-brown) 100%
-        ),
-        /* Maya Blue sacred sky */
-        radial-gradient(ellipse at 50% 20%, rgba(74, 144, 164, 0.3) 0%, transparent 50%),
-        /* Jungle canopy edges */
-        radial-gradient(ellipse at 0% 100%, rgba(34, 139, 34, 0.2) 0%, transparent 40%),
-        radial-gradient(ellipse at 100% 100%, rgba(34, 139, 34, 0.2) 0%, transparent 40%),
-        /* Base */
-        linear-gradient(180deg, var(--obsidian) 0%, var(--cacao-brown) 100%);
+        /* Central sacred glow */
+        radial-gradient(ellipse at 50% 40%, rgba(212, 168, 67, 0.15) 0%, transparent 50%),
+        /* Maya Blue sacred sky emanating from top */
+        radial-gradient(ellipse at 50% 0%, rgba(74, 144, 164, 0.4) 0%, transparent 60%),
+        /* Jade glow from corners */
+        radial-gradient(circle at 0% 0%, rgba(45, 125, 95, 0.3) 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, rgba(45, 125, 95, 0.3) 0%, transparent 40%),
+        /* Terracotta warmth from bottom */
+        radial-gradient(ellipse at 50% 100%, rgba(196, 92, 59, 0.25) 0%, transparent 50%),
+        /* Deep obsidian base */
+        linear-gradient(180deg, var(--obsidian) 0%, #0d0d1a 100%);
     justify-content: flex-start;
     align-items: center;
     position: relative;
@@ -162,52 +159,100 @@ body::after {
     padding-top: var(--spacing-md);
 }
 
-/* Decorative temple border at bottom */
+/* ========================================
+   MAYAN STEP-FRET (XICALCOLIUHQUI) BORDERS
+   Authentic geometric patterns from Maya codices
+   ======================================== */
+
+/* Bottom border - Stepped pyramid with colorful bands */
 #title-screen::before {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 60px;
     background: 
-        /* Stepped pyramid pattern */
-        repeating-linear-gradient(90deg,
-            transparent 0px,
-            transparent 40px,
-            var(--stone-dark) 40px,
-            var(--stone-dark) 42px
-        ),
+        /* Top decorative line - gold */
         linear-gradient(0deg,
-            var(--stone-dark) 0px,
-            var(--stone-dark) 20px,
-            transparent 20px
+            transparent 55px,
+            var(--gold-sun) 55px,
+            var(--gold-sun) 58px,
+            transparent 58px
         ),
+        /* Step-fret pattern layer - terracotta */
+        repeating-linear-gradient(90deg,
+            var(--terracotta) 0px, var(--terracotta) 15px,
+            transparent 15px, transparent 20px,
+            var(--terracotta) 20px, var(--terracotta) 25px,
+            transparent 25px, transparent 40px
+        ),
+        /* Jade accent band */
+        linear-gradient(0deg,
+            transparent 35px,
+            var(--jade-deep) 35px,
+            var(--jade-deep) 45px,
+            transparent 45px
+        ),
+        /* Maya blue band */
+        linear-gradient(0deg,
+            transparent 20px,
+            var(--maya-blue-deep) 20px,
+            var(--maya-blue-deep) 30px,
+            transparent 30px
+        ),
+        /* Base terracotta band */
         linear-gradient(0deg,
             var(--terracotta-dark) 0px,
             var(--terracotta-dark) 15px,
             transparent 15px
         );
-    opacity: 0.6;
+    z-index: 1;
 }
 
-/* Side glyph columns */
+/* Top border - Matching step-fret pattern */
 #title-screen::after {
-    content: '𐊀 𐊁 𐊂 𐊃 𐊄 𐊀 𐊁 𐊂 𐊃 𐊄';
+    content: '';
     position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%) rotate(-90deg);
-    font-size: 1.2rem;
-    color: var(--gold-sun);
-    opacity: 0.15;
-    letter-spacing: 0.5em;
-    white-space: nowrap;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: 
+        /* Gold accent line */
+        linear-gradient(180deg,
+            transparent 35px,
+            var(--gold-sun) 35px,
+            var(--gold-sun) 38px,
+            transparent 38px
+        ),
+        /* Step-fret pattern - jade */
+        repeating-linear-gradient(90deg,
+            var(--jade-light) 0px, var(--jade-light) 10px,
+            transparent 10px, transparent 15px,
+            var(--jade-light) 15px, var(--jade-light) 20px,
+            transparent 20px, transparent 30px
+        ),
+        /* Maya blue top band */
+        linear-gradient(180deg,
+            var(--maya-blue-deep) 0px,
+            var(--maya-blue-deep) 12px,
+            transparent 12px
+        ),
+        /* Terracotta accent */
+        linear-gradient(180deg,
+            transparent 15px,
+            var(--terracotta) 15px,
+            var(--terracotta) 25px,
+            transparent 25px
+        );
+    z-index: 1;
 }
 
 .title-content {
     text-align: center;
     padding: var(--spacing-sm) var(--spacing-md);
+    padding-top: 50px;
     padding-bottom: var(--spacing-xl);
     position: relative;
     z-index: 2;
@@ -218,9 +263,107 @@ body::after {
     gap: var(--spacing-xs);
 }
 
-/* Mayan step-fret (xicalcoliuhqui) border pattern */
+/* Decorative corner glyphs using CSS shapes */
+.title-content::before,
+.title-content::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Top-left serpent head motif */
+.title-content::before {
+    top: 60px;
+    left: 40px;
+    background: 
+        /* Serpent eye */
+        radial-gradient(circle at 60% 40%, var(--gold-sun) 6px, transparent 6px),
+        /* Serpent jaw - stepped */
+        conic-gradient(from 180deg at 50% 50%,
+            var(--jade-light) 0deg, var(--jade-light) 45deg,
+            transparent 45deg, transparent 90deg,
+            var(--terracotta) 90deg, var(--terracotta) 135deg,
+            transparent 135deg, transparent 180deg,
+            var(--maya-blue) 180deg, var(--maya-blue) 225deg,
+            transparent 225deg
+        );
+    clip-path: polygon(0 0, 100% 0, 100% 30%, 70% 30%, 70% 60%, 40% 60%, 40% 100%, 0 100%);
+}
+
+/* Top-right serpent head motif - mirrored */
+.title-content::after {
+    top: 60px;
+    right: 40px;
+    background: 
+        /* Serpent eye */
+        radial-gradient(circle at 40% 40%, var(--gold-sun) 6px, transparent 6px),
+        /* Serpent jaw - stepped */
+        conic-gradient(from 0deg at 50% 50%,
+            var(--jade-light) 0deg, var(--jade-light) 45deg,
+            transparent 45deg, transparent 90deg,
+            var(--terracotta) 90deg, var(--terracotta) 135deg,
+            transparent 135deg, transparent 180deg,
+            var(--maya-blue) 180deg, var(--maya-blue) 225deg,
+            transparent 225deg
+        );
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 60% 100%, 60% 60%, 30% 60%, 30% 30%, 0 30%);
+}
+
+/* Mayan step-fret (xicalcoliuhqui) side decorations */
 .glyph-border {
-    display: none; /* Hidden to save space with new statue layout */
+    position: fixed;
+    width: 25px;
+    top: 50px;
+    bottom: 50px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.glyph-border.top {
+    left: 0;
+    background: 
+        /* Vertical step-fret pattern */
+        repeating-linear-gradient(180deg,
+            var(--gold-sun) 0px, var(--gold-sun) 8px,
+            transparent 8px, transparent 12px,
+            var(--terracotta) 12px, var(--terracotta) 20px,
+            transparent 20px, transparent 24px,
+            var(--jade-light) 24px, var(--jade-light) 32px,
+            transparent 32px, transparent 40px
+        ),
+        /* Stepped edge effect */
+        linear-gradient(90deg,
+            var(--obsidian) 0px,
+            var(--obsidian) 5px,
+            transparent 5px
+        );
+    border-right: 2px solid var(--gold-sun);
+    opacity: 0.7;
+}
+
+.glyph-border.bottom {
+    right: 0;
+    background: 
+        /* Vertical step-fret pattern - offset */
+        repeating-linear-gradient(180deg,
+            var(--jade-light) 0px, var(--jade-light) 8px,
+            transparent 8px, transparent 12px,
+            var(--terracotta) 12px, var(--terracotta) 20px,
+            transparent 20px, transparent 24px,
+            var(--gold-sun) 24px, var(--gold-sun) 32px,
+            transparent 32px, transparent 40px
+        ),
+        /* Stepped edge effect */
+        linear-gradient(270deg,
+            var(--obsidian) 0px,
+            var(--obsidian) 5px,
+            transparent 5px
+        );
+    border-left: 2px solid var(--gold-sun);
+    opacity: 0.7;
 }
 
 @keyframes glyphShimmer {
@@ -232,29 +375,66 @@ body::after {
     font-family: var(--font-display);
     font-size: clamp(2.5rem, 8vw, 4.5rem);
     font-weight: 900;
-    color: var(--gold-sun);
+    color: var(--gold-bright);
     text-shadow: 
-        0 0 30px rgba(212, 168, 67, 0.6),
-        0 0 60px rgba(212, 168, 67, 0.3),
-        0 3px 0 var(--terracotta-dark),
+        0 0 40px rgba(212, 168, 67, 0.8),
+        0 0 80px rgba(212, 168, 67, 0.4),
+        0 0 120px rgba(196, 92, 59, 0.3),
+        0 2px 0 var(--terracotta),
+        0 4px 0 var(--terracotta-dark),
         0 6px 0 var(--cacao-brown),
-        0 9px 15px rgba(0,0,0,0.5);
-    letter-spacing: 0.15em;
+        0 8px 20px rgba(0,0,0,0.6);
+    letter-spacing: 0.2em;
     animation: titleGlow 3s ease-in-out infinite alternate;
     position: relative;
-    margin-bottom: 0;
+    margin-bottom: 0.5rem;
+    /* Stepped underline decoration */
+    padding-bottom: 15px;
 }
 
-/* Decorative underline */
+/* Decorative step-fret underline */
 .game-title::after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--maya-blue), var(--jade-glow), var(--maya-blue), transparent);
+    width: 80%;
+    height: 12px;
+    background: 
+        /* Central jade band */
+        linear-gradient(90deg, 
+            transparent 0%, 
+            var(--jade-light) 20%, 
+            var(--jade-glow) 50%, 
+            var(--jade-light) 80%, 
+            transparent 100%
+        ),
+        /* Step-fret overlay */
+        repeating-linear-gradient(90deg,
+            transparent 0px, transparent 8px,
+            var(--gold-sun) 8px, var(--gold-sun) 10px,
+            transparent 10px, transparent 18px,
+            var(--terracotta) 18px, var(--terracotta) 20px,
+            transparent 20px, transparent 28px
+        );
+    background-size: 100% 100%, 40px 100%;
+    clip-path: polygon(
+        0% 50%, 5% 0%, 15% 0%, 20% 50%, 25% 0%, 35% 0%, 40% 50%, 45% 0%, 55% 0%, 60% 50%, 65% 0%, 75% 0%, 80% 50%, 85% 0%, 95% 0%, 100% 50%,
+        95% 100%, 85% 100%, 80% 50%, 75% 100%, 65% 100%, 60% 50%, 55% 100%, 45% 100%, 40% 50%, 35% 100%, 25% 100%, 20% 50%, 15% 100%, 5% 100%
+    );
+}
+
+/* Decorative serpent heads flanking title */
+.game-title::before {
+    content: '🐍';
+    position: absolute;
+    left: -60px;
+    top: 50%;
+    transform: translateY(-50%) scaleX(-1);
+    font-size: 2rem;
+    opacity: 0.6;
+    filter: hue-rotate(60deg) saturate(1.5);
 }
 
 @keyframes titleGlow {
@@ -286,7 +466,7 @@ body::after {
 }
 
 /* Quetzal emblem - now more stylized */
-/* Tecun Uman Hero Image with floating clouds */
+/* Tecun Uman Hero Image with Mayan frame */
 .quetzal-emblem {
     width: 260px;
     height: 320px;
@@ -298,37 +478,46 @@ body::after {
     flex-shrink: 1;
 }
 
-/* Floating clouds behind the statue - slow, subtle drift */
+/* Colorful Mayan frame around the image */
 .quetzal-emblem::before {
     content: '';
     position: absolute;
-    top: 15%;
-    left: -80px;
-    width: 420px;
-    height: 250px;
+    inset: -12px;
     background: 
-        radial-gradient(ellipse 90px 45px at 15% 50%, rgba(255,255,255,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 110px 55px at 50% 35%, rgba(255,255,255,0.1) 0%, transparent 70%),
-        radial-gradient(ellipse 80px 40px at 85% 55%, rgba(255,255,255,0.08) 0%, transparent 70%);
-    animation: drift-clouds-slow 40s ease-in-out infinite;
+        /* Outer glow */
+        radial-gradient(ellipse at center, transparent 60%, rgba(212, 168, 67, 0.2) 100%);
+    border: 4px solid transparent;
+    border-image: repeating-linear-gradient(
+        45deg,
+        var(--gold-sun) 0px, var(--gold-sun) 8px,
+        var(--terracotta) 8px, var(--terracotta) 16px,
+        var(--jade-light) 16px, var(--jade-light) 24px,
+        var(--maya-blue) 24px, var(--maya-blue) 32px
+    ) 4;
     z-index: 0;
     pointer-events: none;
 }
 
-/* Second cloud layer for depth - different timing */
+/* Glowing sacred aura */
 .quetzal-emblem::after {
     content: '';
     position: absolute;
-    top: 25%;
-    left: -50px;
-    width: 380px;
-    height: 180px;
+    inset: -30px;
     background: 
-        radial-gradient(ellipse 70px 35px at 25% 45%, rgba(255,255,255,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 100px 50px at 75% 55%, rgba(255,255,255,0.09) 0%, transparent 70%);
-    animation: drift-clouds-slow 35s ease-in-out infinite reverse;
-    z-index: 0;
+        radial-gradient(ellipse at center, 
+            rgba(212, 168, 67, 0.25) 0%, 
+            rgba(45, 125, 95, 0.15) 30%,
+            rgba(74, 144, 164, 0.1) 50%, 
+            transparent 70%
+        );
+    z-index: -1;
     pointer-events: none;
+    animation: pulse-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.08); }
 }
 
 @keyframes drift-clouds-slow {
@@ -381,10 +570,18 @@ body::after {
     font-size: 1.2rem;
     padding: var(--spacing-md) var(--spacing-xl);
     background: 
+        /* Colorful Mayan pattern overlay */
+        repeating-linear-gradient(90deg,
+            transparent 0px, transparent 3px,
+            rgba(212, 168, 67, 0.1) 3px, rgba(212, 168, 67, 0.1) 6px,
+            transparent 6px, transparent 12px
+        ),
         /* Stone texture simulation */
-        linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.1) 100%),
+        linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.15) 100%),
         linear-gradient(180deg, var(--stone-light) 0%, var(--stone-dark) 100%);
     border: 3px solid var(--gold-sun);
+    border-left-color: var(--terracotta);
+    border-right-color: var(--jade-light);
     color: var(--cacao-brown);
     cursor: pointer;
     position: relative;
@@ -394,19 +591,27 @@ body::after {
     transition: all 0.3s ease;
     clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
     box-shadow: 
-        0 4px 0 var(--stone-dark),
-        0 6px 10px rgba(0,0,0,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.3);
+        0 4px 0 var(--terracotta-dark),
+        0 6px 12px rgba(0,0,0,0.4),
+        inset 0 2px 0 rgba(255,255,255,0.4);
 }
 
-/* Carved glyph decoration on buttons */
+/* Carved step-fret glyph decoration on buttons */
 .stone-button::before {
-    content: '◆';
+    content: '';
     position: absolute;
-    left: 10px;
+    left: 8px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.6em;
+    width: 12px;
+    height: 12px;
+    background: 
+        linear-gradient(135deg, var(--terracotta) 25%, transparent 25%),
+        linear-gradient(225deg, var(--jade-light) 25%, transparent 25%),
+        linear-gradient(315deg, var(--gold-sun) 25%, transparent 25%),
+        linear-gradient(45deg, var(--maya-blue) 25%, transparent 25%);
+    background-size: 6px 6px;
+    background-position: 0 0, 6px 0, 6px 6px, 0 6px;
     color: var(--gold-sun);
     opacity: 0.7;
 }
