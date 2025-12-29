@@ -2107,8 +2107,13 @@ function showFeedback(isCorrect, question) {
     // Update battle effects (only for actual battles)
     if (battle.type !== 'train') {
         if (isCorrect) {
-            // Damage to Spanish
-            battle.enemyStrength = Math.max(0, battle.enemyStrength - Math.floor(battle.startingEnemyStrength * 0.2));
+            // Damage to Spanish - deal percentage of CURRENT enemy strength
+            // This ensures consistent damage even when enemies are weakened
+            // With 5 questions at 60% needed to win, deal ~25% per correct answer
+            const damagePercent = 0.25;
+            const damage = Math.max(10, Math.floor(battle.enemyStrength * damagePercent));
+            battle.enemyStrength = Math.max(0, battle.enemyStrength - damage);
+            DEBUG.log(`Dealt ${damage} damage to enemies. Remaining: ${battle.enemyStrength}`);
         } else {
             // Damage to K'iche'
             GameState.army = Math.max(100, GameState.army - Math.floor(GameState.army * 0.08));
