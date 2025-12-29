@@ -1313,8 +1313,14 @@ function selectNode(node) {
     const isCurrentPosition = node.id === GameState.armyPosition;
     
     if (isCurrentPosition) {
-        // At this location - show difficulty selector for training
-        showDifficultySelector(actionsDiv, node, 'train');
+        // At this location - if contested/spanish, we need to fight; otherwise train
+        if (node.status === 'contested' || node.status === 'spanish') {
+            // Need to fight enemies here!
+            showDifficultySelector(actionsDiv, node, node.status === 'contested' ? 'defend' : 'attack');
+        } else {
+            // Safe K'iche' territory - can train
+            showDifficultySelector(actionsDiv, node, 'train');
+        }
     } else if (!reqCheck.met) {
         // Requirements not met - show what's needed
         const reqDiv = document.createElement('div');
