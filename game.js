@@ -787,7 +787,7 @@ function resizeCanvas() {
 }
 
 function handleMouseDown(e) {
-    if (e.target.closest('.territory-panel') || e.target.closest('.attack-dialog')) return;
+    if (e.target.closest('.territory-panel') || e.target.closest('.attack-alert')) return;
     GameState.isDragging = true;
     GameState.lastMouse = { x: e.clientX, y: e.clientY };
 }
@@ -1246,8 +1246,7 @@ function selectNode(node) {
     GameState.selectedNode = node;
     
     const panel = document.getElementById('territory-info');
-    // Use popover API to show the panel
-    panel.showPopover();
+    panel.classList.remove('hidden');
     
     document.getElementById('territory-name').textContent = node.name;
     document.getElementById('territory-desc').textContent = node.description;
@@ -1416,8 +1415,7 @@ function showDifficultySelector(container, node, battleType) {
 
 function deselectNode() {
     GameState.selectedNode = null;
-    // Use popover API to hide the panel
-    document.getElementById('territory-info').hidePopover();
+    document.getElementById('territory-info').classList.add('hidden');
 }
 
 // Check if node requirements are met
@@ -1746,14 +1744,21 @@ function renderTutorialCard() {
 }
 
 function updateTutorialNavigation() {
-    const tutorialNav = document.querySelector('.tutorial-navigation');
+    const prevBtn = document.getElementById('tutorial-prev');
+    const nextBtn = document.getElementById('tutorial-next');
+    const startBtn = document.getElementById('start-quiz');
     
-    const isFirstCard = tutorialState.currentIndex === 0;
+    prevBtn.disabled = tutorialState.currentIndex === 0;
+    
     const isLastCard = tutorialState.currentIndex >= tutorialState.items.length - 1;
     
-    // Use data attributes for CSS-based visibility control
-    tutorialNav.dataset.atStart = isFirstCard ? 'true' : 'false';
-    tutorialNav.dataset.atEnd = isLastCard ? 'true' : 'false';
+    if (isLastCard) {
+        nextBtn.classList.add('hidden');
+        startBtn.classList.remove('hidden');
+    } else {
+        nextBtn.classList.remove('hidden');
+        startBtn.classList.add('hidden');
+    }
 }
 
 function tutorialNext() {
@@ -1911,14 +1916,12 @@ function showQuestion() {
         promptEl.textContent = question.prompt;
     }
     
-    const lessonArea = document.querySelector('.lesson-area');
     const textInput = document.getElementById('answer-input');
     const choicesContainer = document.getElementById('choices-container');
     const feedback = document.getElementById('feedback');
     
-    // Reset feedback state using data attribute (CSS handles visibility)
-    lessonArea.dataset.showFeedback = 'false';
-    lessonArea.dataset.answered = 'false';
+    // Hide feedback
+    feedback.classList.add('hidden');
     feedback.classList.remove('correct', 'incorrect');
     
     // Determine question mode
@@ -1939,11 +1942,12 @@ function showQuestion() {
     const isIconTextQuestion = question.isIconTextQuestion || question.type === 'icon_text_select';
     const isPhraseQuestion = question.type === 'phrase_select' || question.type === 'conversation_respond';
     
-    // Set input mode via data attribute (CSS handles show/hide)
-    lessonArea.dataset.inputMode = isMultipleChoice ? 'choice' : 'text';
-    
+    // Show/hide appropriate input
     if (isMultipleChoice) {
-        // Toggle styling modes on choices container
+        textInput.classList.add('hidden');
+        choicesContainer.classList.remove('hidden');
+        
+        // Toggle styling modes
         choicesContainer.classList.toggle('icon-choices', isIconQuestion);
         choicesContainer.classList.toggle('icon-text-choices', isIconTextQuestion);
         choicesContainer.classList.toggle('phrase-choices', isPhraseQuestion);
@@ -1963,6 +1967,8 @@ function showQuestion() {
             btn.onclick = () => selectChoice(btn, question.choices[i]);
         });
     } else {
+        textInput.classList.remove('hidden');
+        choicesContainer.classList.add('hidden');
         choicesContainer.classList.remove('icon-choices', 'icon-text-choices', 'phrase-choices');
         textInput.value = '';
         textInput.placeholder = question.type === 'recall_type' 
@@ -1971,7 +1977,14 @@ function showQuestion() {
         textInput.focus();
     }
     
-    // Button visibility is now handled by CSS based on data-input-mode and data-answered
+    // Show submit for typing questions, hide for multiple choice (auto-submit on click)
+    const submitBtn = document.getElementById('submit-answer');
+    if (isMultipleChoice) {
+        submitBtn.classList.add('hidden');
+    } else {
+        submitBtn.classList.remove('hidden');
+    }
+    document.getElementById('next-question').classList.add('hidden');
 }
 
 function selectChoice(button, answer) {
@@ -2026,13 +2039,8 @@ function submitAnswer() {
 }
 
 function showFeedback(isCorrect, question) {
-    const lessonArea = document.querySelector('.lesson-area');
     const feedback = document.getElementById('feedback');
-    
-    // Use data attributes for visibility (CSS handles show/hide)
-    lessonArea.dataset.showFeedback = 'true';
-    lessonArea.dataset.answered = 'true';
-    feedback.classList.remove('correct', 'incorrect');
+    feedback.classList.remove('hidden', 'correct', 'incorrect');
     feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
     
     const battle = GameState.currentBattle;
@@ -2091,7 +2099,9 @@ function showFeedback(isCorrect, question) {
     
     updateBattleUI();
     
-    // Update next button text (visibility handled by CSS via data-answered)
+    // Show next button
+    document.getElementById('submit-answer').classList.add('hidden');
+    document.getElementById('next-question').classList.remove('hidden');
     document.getElementById('next-question').textContent = 
         GameState.currentQuestionIndex < 4 ? 'Next Challenge' : 'See Results';
 }
@@ -2345,14 +2355,14 @@ function spanishTurn() {
 function showAttackAlert(node) {
     GameState.activeAttack = node;
     
-    // Use native dialog element
-    const dialog = document.getElementById('attack-alert');
+    const alert = document.getElementById('attack-alert');
+    alert.classList.remove('hidden');
     
     document.getElementById('alert-message').textContent = 
         `${t('spanishAttacking')} ${node.name}! ${t('peopleNeedHelp')}`;
     
     document.getElementById('btn-rush-defend').onclick = () => {
-        dialog.close();
+        alert.classList.add('hidden');
         GameState.armyPosition = node.id;
         revealAdjacentNodes(node.id);
         renderMap();
@@ -2361,16 +2371,13 @@ function showAttackAlert(node) {
     };
     
     document.getElementById('btn-ignore-attack').onclick = () => {
-        dialog.close();
+        alert.classList.add('hidden');
         // Territory falls to Spanish if ignored
         node.status = 'spanish';
         node.spanishStrength = 250;
         GameState.morale = Math.max(10, GameState.morale - 10);
         renderMap();
     };
-    
-    // Show as modal dialog
-    dialog.showModal();
 }
 
 function continueCampaign() {
@@ -2711,8 +2718,12 @@ function saveAndQuit() {
 }
 
 function checkForSavedGame() {
-    // Use data attribute for CSS-based visibility control
-    document.body.dataset.hasSave = hasSavedGame() ? 'true' : 'false';
+    const continueBtn = document.getElementById('continue-game');
+    if (hasSavedGame()) {
+        continueBtn.classList.remove('hidden');
+    } else {
+        continueBtn.classList.add('hidden');
+    }
 }
 
 // ========================================
