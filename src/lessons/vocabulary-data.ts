@@ -479,3 +479,4 @@ export const ADJECTIVES_CONTENT: LessonContent = {
     ],
 };
 
+

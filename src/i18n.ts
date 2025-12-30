@@ -442,3 +442,4 @@ export function initI18n(): void {
 (window as any).getLanguage = getLanguage;
 (window as any).initI18n = initI18n;
 
+
