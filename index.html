@@ -263,16 +263,14 @@
         </div>
     </div>
 
-    <!-- TypeScript entry point (Vite) - loads typed modules -->
+    <!-- 
+        Script loading order for TypeScript migration:
+        1. main.ts (ES module) - sets up i18n, vocabulary, lessons on window object
+        2. game.js - uses globals from main.ts, must wait for module to complete
+        
+        Since ES modules are always deferred and execute in order, we dynamically 
+        load game.js from main.ts after the globals are set up.
+    -->
     <script type="module" src="/src/main.ts"></script>
-    
-    <!-- Legacy JavaScript files -->
-    <!-- vocabulary.js - still needed for full vocabulary data -->
-    <script src="vocabulary.js"></script>
-    <!-- lessons.js - still needed for full lesson content (2000+ lines of data) -->
-    <script src="lessons.js"></script>
-    <!-- i18n.js replaced by src/i18n.ts -->
-    <!-- game.js - core game logic -->
-    <script src="game.js"></script>
 </body>
 </html>

@@ -308,15 +308,12 @@ export function checkAnswer(userAnswer: string, correctAnswer: string): boolean 
 }
 
 // ========================================
-// NOTE ON GLOBAL EXPORTS
+// GLOBAL EXPORTS (for compatibility with game.js)
 // ========================================
-// The window globals are still provided by vocabulary.js
-// This TypeScript file provides typed exports for future migration
-// When vocabulary.js is removed, uncomment these:
-//
-// (window as any).VOCABULARY = VOCABULARY;
-// (window as any).QUESTION_TYPES = QUESTION_TYPES;
-// (window as any).getVocabularyByLevel = getVocabularyByLevel;
-// (window as any).generateBattleQuestions = generateBattleQuestions;
-// (window as any).checkAnswer = checkAnswer;
+
+(window as any).VOCABULARY = VOCABULARY;
+(window as any).QUESTION_TYPES = QUESTION_TYPES;
+(window as any).getVocabularyByLevel = getVocabularyByLevel;
+(window as any).generateBattleQuestions = generateBattleQuestions;
+(window as any).checkAnswer = checkAnswer;
 

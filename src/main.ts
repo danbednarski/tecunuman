@@ -2,32 +2,67 @@
  * Main entry point for the Tecun Uman game
  * 
  * This file orchestrates loading of all modules.
- * During the migration, it imports TypeScript modules and ensures
- * they're available before the legacy JS files run.
+ * All TypeScript modules expose their exports to window for game.js compatibility.
  * 
- * MIGRATION STRATEGY:
- * - i18n.ts: FULLY migrated, replaces i18n.js
- * - vocabulary.ts: Types defined, but vocabulary.js still provides data
- * - lessons.ts: Types defined, but lessons.js still provides data
- * - game.js: Not yet migrated
+ * Loading order:
+ * 1. This module executes and sets up all globals on window
+ * 2. game.js is dynamically loaded after globals are ready
+ * 3. DOMContentLoaded fires, initializing i18n and game
  */
 
 // Import TypeScript modules (these will be compiled by Vite)
-import { initI18n } from './i18n';
+// Each module exposes its exports to window automatically
+import './i18n';  // Exposes t, initI18n, etc to window (side-effect import)
+import './vocabulary';  // Exposes VOCABULARY, checkAnswer, etc to window
 
-// The i18n module exposes its functions to window automatically,
-// so the other JS files can use them.
+// Import lessons module and expose to window
+import * as LessonsModule from './lessons';
 
-// Note: vocabulary.ts and lessons.ts provide TYPE DEFINITIONS
-// but the actual data/functions still come from vocabulary.js and lessons.js
-// which are loaded via <script> tags in index.html
+// Expose lessons module to window for game.js compatibility
+(window as any).LESSON_TYPES = LessonsModule.LESSON_TYPES;
+(window as any).LESSONS = LessonsModule.LESSONS;
+(window as any).DIFFICULTY = LessonsModule.DIFFICULTY;
+(window as any).QUESTION_TYPE = LessonsModule.QUESTION_TYPE;
+(window as any).setDifficulty = LessonsModule.setDifficulty;
+(window as any).getDifficulty = LessonsModule.getDifficulty;
+(window as any).generateLessonQuestions = LessonsModule.generateLessonQuestions;
+(window as any).checkLessonAnswer = LessonsModule.checkLessonAnswer;
 
-// Wait for DOM to be ready, then initialize
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize i18n first (language detection, UI updates)
-    initI18n();
-    
-    // The other initialization (difficulty, game) is handled by the legacy JS files
-    // which are still loaded via <script> tags in index.html
+// Export vocabulary data for tutorials
+(window as any).CULTURAL_VOCABULARY = LessonsModule.CULTURAL_VOCABULARY;
+(window as any).VOCABULARY_ANIMALS = LessonsModule.VOCABULARY_ANIMALS;
+(window as any).VOCABULARY_WARFARE = LessonsModule.VOCABULARY_WARFARE;
+(window as any).VOCABULARY_PLACES = LessonsModule.VOCABULARY_PLACES;
+(window as any).VOCABULARY_SPIRITUAL = LessonsModule.VOCABULARY_SPIRITUAL;
+(window as any).VOCABULARY_ADVANCED = LessonsModule.VOCABULARY_ADVANCED;
+(window as any).NEGATION_CONTENT = LessonsModule.NEGATION_CONTENT;
+(window as any).NEGATION_QUESTIONS = LessonsModule.NEGATION_QUESTIONS;
+(window as any).GREETINGS_CONTENT = LessonsModule.GREETINGS_CONTENT;
+(window as any).NUMBERS_CONTENT = LessonsModule.NUMBERS_CONTENT;
+(window as any).PRONOUNS_CONTENT = LessonsModule.PRONOUNS_CONTENT;
+(window as any).POSSESSION_CONTENT = LessonsModule.POSSESSION_CONTENT;
+(window as any).VERBS_CONTENT = LessonsModule.VERBS_CONTENT;
+(window as any).COMMANDS_CONTENT = LessonsModule.COMMANDS_CONTENT;
+(window as any).EXISTENTIAL_CONTENT = LessonsModule.EXISTENTIAL_CONTENT;
+(window as any).QUESTIONS_CONTENT = LessonsModule.QUESTIONS_CONTENT;
+(window as any).ADJECTIVES_CONTENT = LessonsModule.ADJECTIVES_CONTENT;
+(window as any).CONVERSATION_EXCHANGES = LessonsModule.CONVERSATION_EXCHANGES;
+
+// Dynamically load game.js after all globals are set up
+// This ensures game.js has access to t(), generateLessonQuestions(), etc.
+// game.js handles its own initialization including calling initI18n()
+const loadGameScript = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/game.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load game.js'));
+        document.head.appendChild(script);
+    });
+};
+
+// Load game.js - it will handle all initialization including i18n
+loadGameScript().catch((error) => {
+    console.error('Failed to load game:', error);
 });
 

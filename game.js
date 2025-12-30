@@ -2517,6 +2517,7 @@ function updateStats() {
 // ========================================
 
 function startGame() {
+    DEBUG.log('startGame called');
     // Reset state
     GameState.army = 1000;
     GameState.morale = 100;
@@ -2576,7 +2577,10 @@ function restartGame() {
 
 function setupEventListeners() {
     // Title screen
-    document.getElementById('start-game').addEventListener('click', startGame);
+    const startBtn = document.getElementById('start-game');
+    if (startBtn) {
+        startBtn.addEventListener('click', startGame);
+    }
     
     // Difficulty is now selected per-battle in the territory panel
     
@@ -2782,8 +2786,8 @@ function checkForSavedGame() {
 // INITIALIZATION
 // ========================================
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize - handles both fresh page load and dynamic script loading
+function initializeGame() {
     // Initialize i18n first
     initI18n();
     
@@ -2795,4 +2799,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check for saved game
     checkForSavedGame();
-});
+}
+
+// If DOM is already loaded (e.g., script was dynamically inserted), init immediately
+// Otherwise, wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGame);
+} else {
+    // DOM is already ready, init immediately
+    initializeGame();
+}
