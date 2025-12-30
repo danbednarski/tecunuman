@@ -263,13 +263,16 @@
         </div>
     </div>
 
-    <!-- TypeScript entry point (Vite) - loads i18n.ts -->
+    <!-- TypeScript entry point (Vite) - loads typed modules -->
     <script type="module" src="/src/main.ts"></script>
     
-    <!-- Legacy JavaScript files (will migrate to TS incrementally) -->
+    <!-- Legacy JavaScript files -->
+    <!-- vocabulary.js - still needed for full vocabulary data -->
     <script src="vocabulary.js"></script>
+    <!-- lessons.js - still needed for full lesson content (2000+ lines of data) -->
     <script src="lessons.js"></script>
-    <!-- i18n.js replaced by src/i18n.ts loaded via main.ts above -->
+    <!-- i18n.js replaced by src/i18n.ts -->
+    <!-- game.js - core game logic -->
     <script src="game.js"></script>
 </body>
 </html>
