@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   // GitHub Pages deployment: repository is served at /tecunuman/
@@ -18,6 +19,18 @@ export default defineConfig({
     outDir: 'dist',
     // Don't minify for now - easier debugging
     minify: false,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        game: resolve(__dirname, 'game.js'),
+      },
+      output: {
+        entryFileNames: (chunkInfo) => {
+          // Keep game.js at the root of dist with its original name
+          return chunkInfo.name === 'game' ? 'game.js' : 'assets/[name]-[hash].js';
+        },
+      },
+    },
   },
 });
 

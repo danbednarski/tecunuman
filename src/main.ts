@@ -45,7 +45,8 @@ import * as LessonsModule from './lessons';
 const loadGameScript = (): Promise<void> => {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = '/game.js';
+        // Use Vite's base URL to support GitHub Pages deployment
+        script.src = `${import.meta.env.BASE_URL}game.js`;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load game.js'));
         document.head.appendChild(script);
