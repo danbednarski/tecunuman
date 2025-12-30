@@ -11,24 +11,17 @@
  */
 
 // Import TypeScript modules (these will be compiled by Vite)
-// Each module exposes its exports to window automatically
-import './i18n';  // Exposes t, initI18n, etc to window (side-effect import)
-import './vocabulary';  // Exposes VOCABULARY, checkAnswer, etc to window
-
-// Import lessons module and expose to window
+import './i18n';  // Exposes t, initI18n, getCurrentLanguage to window
 import * as LessonsModule from './lessons';
 
-// Expose lessons module to window for game.js compatibility
-(window as any).LESSON_TYPES = LessonsModule.LESSON_TYPES;
+// Expose lessons module functions to window for game.js compatibility
 (window as any).LESSONS = LessonsModule.LESSONS;
-(window as any).DIFFICULTY = LessonsModule.DIFFICULTY;
-(window as any).QUESTION_TYPE = LessonsModule.QUESTION_TYPE;
 (window as any).setDifficulty = LessonsModule.setDifficulty;
 (window as any).getDifficulty = LessonsModule.getDifficulty;
 (window as any).generateLessonQuestions = LessonsModule.generateLessonQuestions;
 (window as any).checkLessonAnswer = LessonsModule.checkLessonAnswer;
 
-// Export vocabulary data for tutorials
+// Export vocabulary content for tutorial rendering
 (window as any).CULTURAL_VOCABULARY = LessonsModule.CULTURAL_VOCABULARY;
 (window as any).VOCABULARY_ANIMALS = LessonsModule.VOCABULARY_ANIMALS;
 (window as any).VOCABULARY_WARFARE = LessonsModule.VOCABULARY_WARFARE;
@@ -36,7 +29,6 @@ import * as LessonsModule from './lessons';
 (window as any).VOCABULARY_SPIRITUAL = LessonsModule.VOCABULARY_SPIRITUAL;
 (window as any).VOCABULARY_ADVANCED = LessonsModule.VOCABULARY_ADVANCED;
 (window as any).NEGATION_CONTENT = LessonsModule.NEGATION_CONTENT;
-(window as any).NEGATION_QUESTIONS = LessonsModule.NEGATION_QUESTIONS;
 (window as any).GREETINGS_CONTENT = LessonsModule.GREETINGS_CONTENT;
 (window as any).NUMBERS_CONTENT = LessonsModule.NUMBERS_CONTENT;
 (window as any).PRONOUNS_CONTENT = LessonsModule.PRONOUNS_CONTENT;
@@ -46,7 +38,6 @@ import * as LessonsModule from './lessons';
 (window as any).EXISTENTIAL_CONTENT = LessonsModule.EXISTENTIAL_CONTENT;
 (window as any).QUESTIONS_CONTENT = LessonsModule.QUESTIONS_CONTENT;
 (window as any).ADJECTIVES_CONTENT = LessonsModule.ADJECTIVES_CONTENT;
-(window as any).CONVERSATION_EXCHANGES = LessonsModule.CONVERSATION_EXCHANGES;
 
 // Dynamically load game.js after all globals are set up
 // This ensures game.js has access to t(), generateLessonQuestions(), etc.
