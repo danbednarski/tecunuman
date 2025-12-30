@@ -1323,7 +1323,7 @@ window.ADJECTIVES_CONTENT = ADJECTIVES_CONTENT;
 const loadGameScript = () => {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = "/game.js";
+    script.src = `${"/tecunuman/"}game.js`;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Failed to load game.js"));
     document.head.appendChild(script);
