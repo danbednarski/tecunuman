@@ -1,0 +1,17 @@
+{
+  "name": "tecunuman",
+  "version": "1.0.0",
+  "description": "Learn K'iche' while defending the K'iche' Kingdom",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}
+

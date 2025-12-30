@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    /* SUPER INCREMENTAL - keep everything loose for now */
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    
+    /* Allow JS files - this is key for incremental migration */
+    "allowJs": true,
+    "checkJs": false,
+    
+    /* Very loose settings - we'll tighten later */
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    
+    /* Output settings */
+    "outDir": "./dist",
+    "rootDir": ".",
+    "declaration": false,
+    
+    /* Interop */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    
+    /* Include our type definitions */
+    "typeRoots": ["./src/types"]
+  },
+  "include": [
+    "src/**/*",
+    "*.js",
+    "*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
+
