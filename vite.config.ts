@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // GitHub Pages deployment: repository is served at /tecununam/
-  base: process.env.NODE_ENV === 'production' ? '/tecununam/' : '/',
+  // GitHub Pages deployment: repository is served at /tecunuman/
+  base: process.env.NODE_ENV === 'production' ? '/tecunuman/' : '/',
 
   // Keep it simple - serve from root, just like before
   root: '.',
