@@ -1,9 +1,39 @@
+// @ts-nocheck - Game logic file with loose typing during incremental TS migration
 // ========================================
 // TECUN UMAN - Campaign Strategy Game
 // Expanded with army movement, branching paths,
 // fog of war, and grammar lessons
 // Guatemala-based geographic map
 // ========================================
+
+// ========================================
+// TYPE DECLARATIONS FOR GLOBALS
+// (Set by main.ts before this script loads)
+// ========================================
+declare const t: (key: string) => string;
+declare const initI18n: () => void;
+declare const LESSONS: any;
+declare const getDifficulty: () => string;
+declare const setDifficulty: (difficulty: string) => void;
+declare const generateLessonQuestions: (lessonId: string, count: number, learnedWords: any[]) => any[];
+declare const checkLessonAnswer: (userAnswer: string, question: any) => boolean;
+declare const getCurrentLanguage: () => string;
+declare const CULTURAL_VOCABULARY: any;
+declare const VOCABULARY_ANIMALS: any;
+declare const VOCABULARY_WARFARE: any;
+declare const VOCABULARY_PLACES: any;
+declare const VOCABULARY_SPIRITUAL: any;
+declare const VOCABULARY_ADVANCED: any;
+declare const GREETINGS_CONTENT: any;
+declare const NUMBERS_CONTENT: any;
+declare const PRONOUNS_CONTENT: any;
+declare const POSSESSION_CONTENT: any;
+declare const NEGATION_CONTENT: any;
+declare const VERBS_CONTENT: any;
+declare const ADJECTIVES_CONTENT: any;
+declare const COMMANDS_CONTENT: any;
+declare const EXISTENTIAL_CONTENT: any;
+declare const QUESTIONS_CONTENT: any;
 
 // ========================================
 // DEBUG MODE
@@ -149,7 +179,7 @@ if (DEBUG.enabled) {
     
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-        if (e.target.matches('input, textarea')) return;
+        if ((e.target as any).matches('input, textarea')) return;
         
         switch(e.key.toLowerCase()) {
             case 'd':
@@ -210,7 +240,7 @@ if (DEBUG.enabled) {
 // ========================================
 // GAME STATE
 // ========================================
-const GameState = {
+const GameState: any = {
     // Player resources
     army: 1000,
     morale: 100,
@@ -1688,6 +1718,7 @@ function showTutorial(node, battleType) {
     document.getElementById('tutorial-title').textContent = `${t('learning')}: ${lesson?.englishName || 'Vocabulary'}`;
     document.getElementById('tutorial-location').textContent = node.name;
     
+    // @ts-ignore - textContent accepts numbers
     // Update progress
     document.getElementById('tutorial-total').textContent = tutorialState.items.length;
     
@@ -1749,6 +1780,7 @@ function renderTutorialCard() {
             </div>
         </div>
     `;
+    // @ts-ignore - textContent accepts numbers
     
     // Update progress
     document.getElementById('tutorial-current').textContent = tutorialState.currentIndex + 1;
@@ -1756,6 +1788,7 @@ function renderTutorialCard() {
 
 function updateTutorialNavigation() {
     const prevBtn = document.getElementById('tutorial-prev');
+    // @ts-ignore - disabled exists on HTMLElement
     const nextBtn = document.getElementById('tutorial-next');
     const startBtn = document.getElementById('start-quiz');
     
@@ -1976,17 +2009,21 @@ function showQuestion() {
         choicesContainer.classList.toggle('icon-text-choices', isIconTextQuestion);
         choicesContainer.classList.toggle('phrase-choices', isPhraseQuestion);
         
+            // @ts-ignore - style exists on button elements
         const buttons = choicesContainer.querySelectorAll('.choice-btn');
         buttons.forEach((btn, i) => {
             if (question.choices && question.choices[i]) {
+            // @ts-ignore - style exists on button elements
                 btn.textContent = question.choices[i];
                 btn.style.display = '';
+        // @ts-ignore - disabled/onclick exist on button elements
                 // Add special class for phrase buttons
                 btn.classList.toggle('phrase-btn', isPhraseQuestion);
             } else {
                 btn.style.display = 'none';
             }
             btn.classList.remove('correct', 'incorrect');
+        // @ts-ignore - value/placeholder exist on input elements
             btn.disabled = false;
             btn.onclick = () => selectChoice(btn, question.choices[i]);
         });
@@ -2008,6 +2045,7 @@ function showQuestion() {
     } else {
         submitBtn.classList.remove('hidden');
     }
+        // @ts-ignore - disabled exists on button elements
     document.getElementById('next-question').classList.add('hidden');
 }
 
@@ -2036,6 +2074,7 @@ function selectChoice(button, answer) {
     }
     
     showFeedback(isCorrect, question);
+        // @ts-ignore - value exists on input elements
 }
 
 function submitAnswer() {
@@ -2268,6 +2307,7 @@ function endBattle() {
     
     // Update mastery
     GameState.mastery = Math.min(100, Math.floor((GameState.wordsLearned.size / 80) * 100));
+    // @ts-ignore - textContent accepts numbers
     
     // Display results
     const titleEl = document.getElementById('result-title');
