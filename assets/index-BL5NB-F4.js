@@ -1318,15 +1318,15 @@ const DEBUG = {
   logState() {
     if (this.enabled) {
       console.group("[TecunUman DEBUG] Game State");
-      console.log("Army:", GameState.army);
-      console.log("Morale:", GameState.morale);
-      console.log("Mastery:", GameState.mastery);
-      console.log("Turn:", GameState.turn);
-      console.log("Army Position:", GameState.armyPosition);
-      console.log("Words Learned:", GameState.wordsLearned.size);
-      console.log("Battles Won/Lost:", GameState.battlesWon, "/", GameState.battlesLost);
-      console.log("Completed Lessons:", GameState.completedLessons);
-      console.log("Current Battle:", GameState.currentBattle);
+      console.log("Army:", window.GameState.army);
+      console.log("Morale:", window.GameState.morale);
+      console.log("Mastery:", window.GameState.mastery);
+      console.log("Turn:", window.GameState.turn);
+      console.log("Army Position:", window.GameState.armyPosition);
+      console.log("Words Learned:", window.GameState.wordsLearned.size);
+      console.log("Battles Won/Lost:", window.GameState.battlesWon, "/", window.GameState.battlesLost);
+      console.log("Completed Lessons:", window.GameState.completedLessons);
+      console.log("Current Battle:", window.GameState.currentBattle);
       console.groupEnd();
     }
   },
@@ -1346,40 +1346,51 @@ const DEBUG = {
   // Helper functions for console use
   addArmy(amount = 500) {
     if (!this.enabled) return;
-    GameState.army += amount;
-    if (typeof updateStats === "function") updateStats();
-    this.log("Added", amount, "army. Total:", GameState.army);
+    const GameState2 = window.GameState;
+    const updateStats2 = window.updateStats;
+    GameState2.army += amount;
+    if (typeof updateStats2 === "function") updateStats2();
+    this.log("Added", amount, "army. Total:", GameState2.army);
   },
   setMorale(value = 100) {
     if (!this.enabled) return;
-    GameState.morale = Math.min(100, Math.max(0, value));
-    if (typeof updateStats === "function") updateStats();
-    this.log("Morale set to:", GameState.morale);
+    const GameState2 = window.GameState;
+    const updateStats2 = window.updateStats;
+    GameState2.morale = Math.min(100, Math.max(0, value));
+    if (typeof updateStats2 === "function") updateStats2();
+    this.log("Morale set to:", GameState2.morale);
   },
   teleport(nodeId) {
     if (!this.enabled) return;
-    const node = GameState.nodes.find((n) => n.id === nodeId);
+    const GameState2 = window.GameState;
+    const revealAdjacentNodes2 = window.revealAdjacentNodes;
+    const renderMap2 = window.renderMap;
+    const centerCameraOnNode2 = window.centerCameraOnNode;
+    const node = GameState2.nodes.find((n) => n.id === nodeId);
     if (node) {
-      GameState.armyPosition = nodeId;
-      GameState.revealedNodes.add(nodeId);
-      if (typeof revealAdjacentNodes === "function") revealAdjacentNodes(nodeId);
-      if (typeof renderMap === "function") renderMap();
-      if (typeof centerCameraOnNode === "function") centerCameraOnNode(node, true);
+      GameState2.armyPosition = nodeId;
+      GameState2.revealedNodes.add(nodeId);
+      if (typeof revealAdjacentNodes2 === "function") revealAdjacentNodes2(nodeId);
+      if (typeof renderMap2 === "function") renderMap2();
+      if (typeof centerCameraOnNode2 === "function") centerCameraOnNode2(node, true);
       this.log("Teleported to:", node.name);
     } else {
       this.warn("Node not found:", nodeId);
-      this.log("Available nodes:", GameState.nodes.map((n) => n.id).join(", "));
+      this.log("Available nodes:", GameState2.nodes.map((n) => n.id).join(", "));
     }
   },
   captureNode(nodeId) {
     if (!this.enabled) return;
-    const node = GameState.nodes.find((n) => n.id === nodeId);
+    const GameState2 = window.GameState;
+    const revealAdjacentNodes2 = window.revealAdjacentNodes;
+    const renderMap2 = window.renderMap;
+    const node = GameState2.nodes.find((n) => n.id === nodeId);
     if (node) {
       node.status = "kiche";
       node.spanishStrength = 0;
-      GameState.revealedNodes.add(nodeId);
-      if (typeof revealAdjacentNodes === "function") revealAdjacentNodes(nodeId);
-      if (typeof renderMap === "function") renderMap();
+      GameState2.revealedNodes.add(nodeId);
+      if (typeof revealAdjacentNodes2 === "function") revealAdjacentNodes2(nodeId);
+      if (typeof renderMap2 === "function") renderMap2();
       this.log("Captured:", node.name);
     } else {
       this.warn("Node not found:", nodeId);
@@ -1387,31 +1398,34 @@ const DEBUG = {
   },
   completeLesson(nodeId, difficulty = "hero") {
     if (!this.enabled) return;
-    if (!GameState.completedLessons[nodeId]) {
-      GameState.completedLessons[nodeId] = {};
+    const GameState2 = window.GameState;
+    if (!GameState2.completedLessons[nodeId]) {
+      GameState2.completedLessons[nodeId] = {};
     }
-    GameState.completedLessons[nodeId][difficulty] = true;
+    GameState2.completedLessons[nodeId][difficulty] = true;
     if (difficulty === "hero") {
-      GameState.completedLessons[nodeId]["warrior"] = true;
-      GameState.completedLessons[nodeId]["soldier"] = true;
+      GameState2.completedLessons[nodeId]["warrior"] = true;
+      GameState2.completedLessons[nodeId]["soldier"] = true;
     } else if (difficulty === "warrior") {
-      GameState.completedLessons[nodeId]["soldier"] = true;
+      GameState2.completedLessons[nodeId]["soldier"] = true;
     }
     this.log("Completed lesson at", nodeId, "difficulty:", difficulty);
   },
   listNodes() {
     if (!this.enabled) return;
-    console.table(GameState.nodes.map((n) => ({
+    const GameState2 = window.GameState;
+    console.table(GameState2.nodes.map((n) => ({
       id: n.id,
       name: n.name,
       status: n.status,
       spanishStrength: n.spanishStrength,
       lessonType: n.lessonType,
-      revealed: GameState.revealedNodes.has(n.id)
+      revealed: GameState2.revealedNodes.has(n.id)
     })));
   }
 };
-if (DEBUG.enabled) {
+function initDebugMode() {
+  if (!DEBUG.enabled) return;
   console.log("%c[TecunUman] DEBUG MODE ENABLED", "background: #ff6b35; color: white; padding: 4px 8px; font-weight: bold;");
   console.log("Debug features:");
   console.log("  - All nodes accessible (requirements bypassed)");
@@ -1431,19 +1445,22 @@ if (DEBUG.enabled) {
       case "s":
         if ((_a = document.getElementById("tutorial-screen")) == null ? void 0 : _a.classList.contains("active")) {
           DEBUG.log("Skipping tutorial...");
-          if (typeof startQuizFromTutorial === "function") {
-            startQuizFromTutorial();
+          const startQuizFromTutorial2 = window.startQuizFromTutorial;
+          if (typeof startQuizFromTutorial2 === "function") {
+            startQuizFromTutorial2();
           }
         }
         break;
       case "w":
-        if (((_b = document.getElementById("battle-screen")) == null ? void 0 : _b.classList.contains("active")) && GameState.currentBattle) {
+        const GameState2 = window.GameState;
+        const endBattle2 = window.endBattle;
+        if (((_b = document.getElementById("battle-screen")) == null ? void 0 : _b.classList.contains("active")) && GameState2.currentBattle) {
           DEBUG.log("Auto-winning battle...");
-          GameState.currentQuestions.length - GameState.currentQuestionIndex;
-          GameState.correctAnswers = GameState.currentQuestions.length;
-          GameState.currentQuestionIndex = GameState.currentQuestions.length;
-          GameState.currentBattle.enemyStrength = 0;
-          endBattle();
+          GameState2.currentQuestions.length - GameState2.currentQuestionIndex;
+          GameState2.correctAnswers = GameState2.currentQuestions.length;
+          GameState2.currentQuestionIndex = GameState2.currentQuestions.length;
+          GameState2.currentBattle.enemyStrength = 0;
+          endBattle2();
         }
         break;
     }
@@ -1468,7 +1485,6 @@ if (DEBUG.enabled) {
         `;
     document.body.appendChild(indicator);
     window.DEBUG = DEBUG;
-    window.GameState = GameState;
   });
 }
 const GameState = {
@@ -1506,6 +1522,7 @@ const GameState = {
   // Spanish attack event
   activeAttack: null
 };
+window.GameState = GameState;
 const NODE_TYPES = {
   START: { lesson: "vocabulary", icon: "🏛️", name: "Capital" },
   VOCABULARY: { lesson: "vocabulary", icon: "📚", name: "Village" },
@@ -3334,8 +3351,15 @@ function checkForSavedGame() {
     continueBtn.classList.add("hidden");
   }
 }
+window.updateStats = updateStats;
+window.endBattle = endBattle;
+window.revealAdjacentNodes = revealAdjacentNodes;
+window.renderMap = renderMap;
+window.centerCameraOnNode = centerCameraOnNode;
+window.startQuizFromTutorial = startQuizFromTutorial;
 function initializeGame() {
   initI18n();
+  initDebugMode();
   initCanvas();
   setupEventListeners();
   checkForSavedGame();
